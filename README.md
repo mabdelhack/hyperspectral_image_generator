@@ -13,13 +13,15 @@ It allows an image generator to make the following transformations on images:
 
 It uses the edge pixels to pad the pixels that become missing due to the transformations.
 
-Without augmentation:
+**Without augmentation:**
+
 ![](images_for_notebook/no_augmentation.png)
 
-With augmentation:
+**With augmentation:**
+
 ![](images_for_notebook/augmentation.png)
 
-##Requirements
+## Requirements
 These are the requirements for running this whole simulation. The generator itself only uses scikit-image and numpy libraries.
 - Keras
 - Tensorflow
@@ -36,6 +38,6 @@ First, download the [data](http://madm.dfki.de/downloads) and write the data pat
 
 Then run train_hyperspectral_vgg19.py to train a VGG19 network using image augmentation. You can test the function to visualize the output using image_augmentation_demo notebook.
 
-##Future plans
+## Future plans
 - Allow different modes of noise other than speckle noise.
 - Implement cropping from a bigger image to avoid padding.
