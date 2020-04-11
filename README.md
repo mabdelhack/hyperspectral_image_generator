@@ -18,6 +18,7 @@ Without augmentation:
 
 With augmentation:
 ![](images_for_notebook/augmentation.png)
+
 ##Requirements
 These are the requirements for running this whole simulation. The generator itself only uses scikit-image and numpy libraries.
 - Keras
