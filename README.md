@@ -14,10 +14,14 @@ It allows an image generator to make the following transformations on images:
 It uses the edge pixels to pad the pixels that become missing due to the transformations.
 
 Without augmentation:
+
 ![](images_for_notebook/no_augmentation.png)
 
+
 With augmentation:
+
 ![](images_for_notebook/augmentation.png)
+
 
 ## Requirements
 These are the requirements for running this whole simulation. The generator itself only uses scikit-image and numpy libraries.
