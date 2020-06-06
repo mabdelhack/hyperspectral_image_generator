@@ -54,6 +54,8 @@ def hyperspectral_image_generator_jp2(files, shape_file, class_indices, batch_si
                                       vertical_flip=False, crop_size=None, filling_mode='edge',
                                       speckle_noise=None):
     from rasterio.mask import mask
+    from rasterio import open
+    from shapely.geometry import box
     import geopandas as gpd
     import numpy as np
     from random import sample
@@ -61,17 +63,23 @@ def hyperspectral_image_generator_jp2(files, shape_file, class_indices, batch_si
 
     geometry_df = gpd.read_file(shape_file)
     centroids = geometry_df['geometry'].values
+    files_centroids = list(zip(files*len(centroids), list(centroids)*len(files)))
     while True:
         # select batch_size number of samples without replacement
-        batch_files = sample(files, batch_size)
+        batch_files = sample(files_centroids, batch_size)
         # get one_hot_label
         batch_Y = categorical_label_from_full_file_name(batch_files,
                                                         class_indices)
         # array for images
         batch_X = []
         # loop over images of the current batch
-        for idx, input_path in enumerate(batch_files):
-            image = np.array(imread(input_path), dtype=float)
+        for idx, (rf, polycenter) in enumerate(batch_files):
+            raster_file = open(rf)
+            mask_polygon = box(polycenter.coords.xy[0][0] - max(crop_size[0] * 4, raster_file.bounds.left),
+                               polycenter.coords.xy[1][0] - max(crop_size[1] * 4, raster_file.bounds.bottom),
+                               polycenter.coords.xy[0][0] + min(crop_size[0] * 4, raster_file.bounds.right),
+                               polycenter.coords.xy[1][0] + min(crop_size[1] * 4, raster_file.bounds.top))
+            image, out_transform = mask(raster_file, shapes=[mask_polygon], crop=True, all_touched=True)
             if image_mean is not None:
                 mean_std_data = np.loadtxt(image_mean, delimiter=',')
                 image = preprocessing_image_ms(image, mean_std_data[0], mean_std_data[1])
