@@ -11,16 +11,14 @@ file_band_stds = np.zeros((len(image_files), band_count))
 
 for idx, image in enumerate(image_files):
     raster_file = open(image)
-    for band in range(raster_file.count):
-        band = raster_file.read(band + 1)
+    for band_idx in range(raster_file.count):
+        band = raster_file.read(band_idx + 1)
         band_mean = band.mean()
         band_std = band.std()
-        file_band_means[idx, band] = band_mean
-        file_band_stds[idx, band] = band_std
+        file_band_means[idx, band_idx] = band_mean
+        file_band_stds[idx, band_idx] = band_std
 global_mean = file_band_means.mean(axis=0)
 global_std = file_band_stds.mean(axis=0)
 res = np.stack((np.array(global_mean), np.array(global_std)), axis=0)
 res = res.transpose()
 np.savetxt('jp2_image_mean_std.txt', res, delimiter=',')
-
-
