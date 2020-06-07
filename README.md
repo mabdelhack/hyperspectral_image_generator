@@ -1,6 +1,7 @@
 # Hyperspectral Image Generator
 
 This is a tool that creates an image generator for Keras that is useful for hyperspectral images. It implements data augmentation. This tool is developed originally from [CNN Sentinel](https://github.com/jensleitloff/CNN-Sentinel) repository and uses main functions as is from the original repository.
+Example implementation in this [paper](https://arxiv.org/abs/2003.13502).
 
 ## Features
 It allows an image generator to make the following transformations on images:
