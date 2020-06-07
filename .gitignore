@@ -1,3 +1,6 @@
 
 *.xml
 *.iml
+.ipynb_checkpoints/image_augmentation_demo-checkpoint.ipynb
+*.pyc
+testing_py.py

@@ -48,7 +48,7 @@ def hyperspectral_image_generator(files, class_indices, batch_size=32, image_mea
         yield(X, Y)
 
 
-def hyperspectral_image_generator_jp2(files, shape_file, class_indices, batch_size=32, image_mean=None,
+def hyperspectral_image_generator_jp2(files, shape_file, class_indices_column, batch_size=32, image_mean=None,
                                       rotation_range=0, shear_range=0, scale_range=1,
                                       transform_range=0, horizontal_flip=False,
                                       vertical_flip=False, crop_size=None, filling_mode='edge',
@@ -60,29 +60,37 @@ def hyperspectral_image_generator_jp2(files, shape_file, class_indices, batch_si
     import numpy as np
     from random import sample
     from image_functions import categorical_label_from_full_file_name, preprocessing_image_ms
+    from keras.utils import to_categorical
 
     geometry_df = gpd.read_file(shape_file)
     centroids = geometry_df['geometry'].values
-    files_centroids = list(zip(files*len(centroids), list(centroids)*len(files)))
+    class_indices = geometry_df[class_indices_column].values.astype(int)
+    number_of_classes = class_indices.max()
+    files_centroids = list(zip(files*len(centroids), list(centroids)*len(files), list(class_indices)*len(files)))
     while True:
         # select batch_size number of samples without replacement
         batch_files = sample(files_centroids, batch_size)
         # get one_hot_label
-        batch_Y = categorical_label_from_full_file_name(batch_files,
-                                                        class_indices)
+
+        batch_Y = []
         # array for images
         batch_X = []
         # loop over images of the current batch
-        for idx, (rf, polycenter) in enumerate(batch_files):
+        for idx, (rf, polycenter, label) in enumerate(batch_files):
             raster_file = open(rf)
-            mask_polygon = box(polycenter.coords.xy[0][0] - max(crop_size[0] * 4, raster_file.bounds.left),
-                               polycenter.coords.xy[1][0] - max(crop_size[1] * 4, raster_file.bounds.bottom),
-                               polycenter.coords.xy[0][0] + min(crop_size[0] * 4, raster_file.bounds.right),
-                               polycenter.coords.xy[1][0] + min(crop_size[1] * 4, raster_file.bounds.top))
+            mask_polygon = box(max(polycenter.coords.xy[0][0] - raster_file.transform[0] * crop_size[0] * 2,
+                                   raster_file.bounds.left),
+                               max(polycenter.coords.xy[1][0] - raster_file.transform[4] * crop_size[1] * 2,
+                                   raster_file.bounds.bottom),
+                               min(polycenter.coords.xy[0][0] + raster_file.transform[0] * crop_size[0] * 2,
+                                   raster_file.bounds.right),
+                               min(polycenter.coords.xy[1][0] + raster_file.transform[4] * crop_size[1] * 2,
+                                   raster_file.bounds.top))
             image, out_transform = mask(raster_file, shapes=[mask_polygon], crop=True, all_touched=True)
+            image = np.transpose(image, (1, 2, 0))
             if image_mean is not None:
                 mean_std_data = np.loadtxt(image_mean, delimiter=',')
-                image = preprocessing_image_ms(image, mean_std_data[0], mean_std_data[1])
+                image = preprocessing_image_ms(image.astype(np.float64), mean_std_data[0], mean_std_data[1])
             # process image
             image = augmentation_image_ms(image, rotation_range=rotation_range, shear_range=shear_range,
                                           scale_range=scale_range,
@@ -97,8 +105,10 @@ def hyperspectral_image_generator_jp2(files, shape_file, class_indices, batch_si
                 image *= image_max
 
             image = crop_image(image, crop_size)
+
             # put all together
             batch_X += [image]
+            batch_Y += [to_categorical(label, num_classes=number_of_classes)]
         # convert lists to np.array
         X = np.array(batch_X)
         Y = np.array(batch_Y)
@@ -150,5 +160,5 @@ def crop_image(image, target_size):
     out_img = image[int(midpoint[0] - ceil(x_crop / 2)):int(midpoint[0] + floor(x_crop / 2)),
               int(midpoint[1] - ceil(y_crop / 2)):int(midpoint[1] + floor(y_crop / 2)),
               :]
-    assert out_img.shape[0:2] == target_size
+    assert list(out_img.shape[0:2]) == target_size
     return out_img
