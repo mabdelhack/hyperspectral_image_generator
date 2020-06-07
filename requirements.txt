@@ -1,8 +1,19 @@
 
 Keras==2.3.1
+
 Keras-Applications==1.0.8
+
 Keras-Preprocessing==1.1.0
+
 numpy==1.18.1
+
 pandas==1.0.1
+
 scikit-image==0.16.2
+
 tensorflow-gpu==2.1.0
+
+rasterio==1.0.26
+shapely==1.6.4.post2
+geopandas==0.5.1
+fiona==1.7.10
