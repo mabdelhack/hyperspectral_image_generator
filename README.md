@@ -50,7 +50,8 @@ Then run train_hyperspectral_vgg19.py to train a VGG19 network using image augme
 
 ## How to use tile cropping
 ![](images_for_notebook/jp2_generator.png)
-I used data from the farm pin crop detection challenge from the [Zindi](https://zindi.africa/competitions/farm-pin-crop-detection-challenge) platform.
+I used data from the park location in the city of St. Louis, Missouri, USA released by the 
+[St. Louis government website](https://www.stlouis-mo.gov/) with [Google maps](maps.google.com) satellite imagery for background.
 A demo of the generator is included at the end of the notebook. Note that you need to download the data from the website 
 and concatenate each two tiles belonging to the same time frame together (Data is quite large). The shape file with labels 
 and centroids is included in the repo but it is just a processed version of the original file, I do not possess any rights 
