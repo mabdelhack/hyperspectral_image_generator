@@ -1,3 +1,7 @@
+import os
+from keras.utils import to_categorical
+
+
 def preprocessing_image_ms(x, mean, std):
     # loop over image channels
     for idx, mean_value in enumerate(mean):
@@ -7,8 +11,7 @@ def preprocessing_image_ms(x, mean, std):
 
 
 def categorical_label_from_full_file_name(files, class_indices):
-    from keras.utils import to_categorical
-    import os
+
     # file basename without extension
     base_name = [os.path.splitext(os.path.basename(i))[0] for i in files]
     # class label from filename

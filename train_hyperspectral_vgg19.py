@@ -7,19 +7,16 @@ with open data and Python
 
 """
 import os
-#os.environ["CUDA_VISIBLE_DEVICES"]="-1"   #CPU mode
+# os.environ["CUDA_VISIBLE_DEVICES"]="-1"   #CPU mode
 from glob import glob
+
+import pandas as pd
 from keras.applications.vgg16 import VGG16 as VGG
-from keras.applications.densenet import DenseNet201 as DenseNet
+from keras.callbacks import ModelCheckpoint
 from keras.layers import Flatten, Dense
 from keras.models import Model
-from keras.callbacks import ModelCheckpoint, EarlyStopping
+
 from hyperspectral_image_generator import hyperspectral_image_generator
-import pandas as pd
-from keras import backend as K
-import tensorflow as tf
-
-
 
 # variables
 path_to_split_datasets = 'path to split dataset'

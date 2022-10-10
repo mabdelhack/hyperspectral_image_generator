@@ -1,14 +1,22 @@
+from random import sample
+
+import geopandas as gpd
+import numpy as np
+from keras.utils import to_categorical
+from numpy import ceil, floor
+from rasterio import open
+from rasterio.mask import mask
+from shapely.geometry import box
+from skimage.io import imread
+from image_functions import categorical_label_from_full_file_name, preprocessing_image_ms
+
+
 def hyperspectral_image_generator(files, class_indices, batch_size=32, image_mean=None,
                            rotation_range=0, shear_range=0, scale_range=1,
                            transform_range=0, horizontal_flip=False,
                            vertical_flip=False, crop=False, crop_size=None, filling_mode='edge',
                            speckle_noise=None):
-    from skimage.io import imread
-    import numpy as np
-    from random import sample
-    from image_functions import categorical_label_from_full_file_name, preprocessing_image_ms
-
-    while True:
+   while True:
         # select batch_size number of samples without replacement
         batch_files = sample(files, batch_size)
         # get one_hot_label
@@ -53,15 +61,6 @@ def hyperspectral_image_generator_jp2(files, shape_file, class_indices_column, b
                                       transform_range=0, horizontal_flip=False,
                                       vertical_flip=False, crop_size=None, filling_mode='edge',
                                       speckle_noise=None):
-    from rasterio.mask import mask
-    from rasterio import open
-    from shapely.geometry import box
-    import geopandas as gpd
-    import numpy as np
-    from random import sample
-    from image_functions import categorical_label_from_full_file_name, preprocessing_image_ms
-    from keras.utils import to_categorical
-
     geometry_df = gpd.read_file(shape_file)
     centroids = geometry_df['geometry'].values
     class_indices = geometry_df[class_indices_column].values.astype(int)
@@ -152,7 +151,7 @@ def augmentation_image_ms(image, rotation_range=0, shear_range=0, scale_range=1,
 
 
 def crop_image(image, target_size):
-    from numpy import ceil, floor
+
     x_crop = min(image.shape[0], target_size[0])
     y_crop = min(image.shape[1], target_size[1])
     midpoint = [ceil(image.shape[0] / 2), ceil(image.shape[1] / 2)]

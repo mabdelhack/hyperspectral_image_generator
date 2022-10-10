@@ -1,9 +1,8 @@
-from rasterio import open
 from glob import glob
 import numpy as np
+from rasterio import open
 
-
-path_to_images = "C:\\Users\\laptomon\\Documents\\python_keras\\zindi\\farming\\data\\train_large\\"
+path_to_images = "path to images"
 image_files = glob(path_to_images + "/*.jp2")
 band_count = 13
 file_band_means = np.zeros((len(image_files), band_count))
