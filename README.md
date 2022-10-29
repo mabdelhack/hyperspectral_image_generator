@@ -47,16 +47,16 @@ A use case is imported from the [original repository](https://github.com/jenslei
 
 First, download the [data](http://madm.dfki.de/downloads) and write the data path into split_data_to_train_and_validation.py then run it to generate training and test datasets.
 
-Then run train_hyperspectral_vgg19.py to train a VGG19 network using image augmentation. You can test the function to visualize the output using image_augmentation_demo notebook.
+Then run train_hyperspectral_vgg19.py to train a VGG19 network using image augmentation. 
+
+You can test the function to visualize the output using augmentation_test.py.
 
 ## How to use tile cropping
 ![](images_for_notebook/jp2_generator.png)
 I used data from the park location in the city of St. Louis, Missouri, USA released by the 
 [St. Louis government website](https://www.stlouis-mo.gov/) with [Google maps](maps.google.com) satellite imagery for background.
-A demo of the generator is included at the end of the notebook. Note that you need to download the data from the website 
-and concatenate each two tiles belonging to the same time frame together (Data is quite large). The shape file with labels 
-and centroids is included in the repo but it is just a processed version of the original file, I do not possess any rights 
-to the data it comprises.
+A demo of the generator is included in slicing_test.py. Note that you need to download the [data](https://doi.org/10.6084/m9.figshare.21431082) and include them in the folder ```images_for_notebook``` (Data is quite large). The shape file with labels 
+Centroids are included in the repo (shape files) but it is just a processed version of the original file, I do not possess any rights to the data it comprises.
 
 ## Future plans
 - Allow different modes of noise other than speckle noise.
